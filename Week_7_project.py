@@ -32,10 +32,8 @@ def printinfo(DetailsPrinted):
     TotTax = 0.00
     TotNetPay = 0.00
 
-    file = open('employees.txt', 'r') 
-    EmpFile = f.read()
-    
-while True:
+    EmpFile = open('employees.txt', 'r')    
+    while True:
         rundate = input ("Enter start date for report (MM/DD/YYYY) or All for all data in file: ")
         if (rundate.upper() == "ALL"):
             break
@@ -46,23 +44,17 @@ while True:
             print("Invalid date format. Try again.")
             print()
             continue  # skip next if statement and re-start loop
-        while True:
-            with open('empFile.txt' ,'r') as f:
-                EmpDetail = f.read()
-        
+    while True:
+        EmpDetail = EmpFile.readline()
         if not EmpDetail:
             break
-        EmpFile = file.readlines()
-        modified = []
-        for line in EmpFile:
-            modified.append(line.strip())
-        EmpFile.split('|')
-        Empfile = EmpList
+        EmpDetail = EmpDetail.replace('\n' , '')
+        EmpList = EmpDetail.split("|")
         fromdate = EmpList[0]
         if (str(rundate).upper() != "ALL"):
             checkdate = datetime.strptime(fromdate, "%m/%d/%Y")
             if (checkdate < rundate):
-                continue        
+                continue
         todate = EmpList[1]
         empname = EmpList[2]
         hours = float(EmpList[3])
@@ -81,9 +73,9 @@ while True:
         EmpTotals["TotTax"] = TotTax
         EmpTotals["TotNetPay"] = TotNetPay
         DetailsPrinted = True
-        if (DetailsPrinted):  #skip of no detail lines printed
-            PrintTotals (EmpTotals)
-        else:
+    if (DetailsPrinted):  #skip of no detail lines printed
+       PrintTotals (EmpTotals)
+    else:
             print("No detail information to print")
 def PrintTotals(EmpTotals):    
     print()
@@ -92,26 +84,19 @@ def PrintTotals(EmpTotals):
     print(f'Total Gross Pay: {EmpTotals["TotGrossPay"]:,.2f}')
     print(f'Total Income Tax:  {EmpTotals["TotTax"]:,.2f}')
     print(f'Total Net Pay: {EmpTotals["TotNetPay"]:,.2f}')   
-
 if __name__ == "__main__":
-      with open('Employees.txt','a'):
-
-        DetailsPrinted = False
-      while True:
+     EmpFile = open('Employees.txt' , 'a')
+     EmpTotals = {}
+     DetailsPrinted = False
+     while True:
         empname = GetEmpName()
         if (empname.upper() == "END"):
-                break
+            break
         fromdate, todate = GetDatesWorked()
         hours = GetHoursWorked()
         hourlyrate = GetHourlyRate()
         taxrate = GetTaxRate()
-        ##############################################################
-        # write the line of code that will concatenate fromdate, todate, empname, hours, hourlyrate, and taxrate. Pipe delimit each value and add a carriage return to the end of the line
- 
- # and assign the line to EmpDetail
-EmpDetail = [fromdate, todate, empname, hours, hourlyrate, taxrate]
-EmpDetail = EmpFile
-        # write the liie of code that will write EmpDetail to EmpFile
-   # write the line of code to close EmpFile
-fileclose(EmpFile)
+        EmpDetail = fromdate + '|' + todate + '|' + empname + '|' + str(hours) + '|' + str(hourlyrate) + '|' + str(taxrate) + '\n'
+        EmpFile.write(EmpDetail)
+EmpFile.close()
 printinfo(DetailsPrinted)
